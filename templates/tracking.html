@@ -1,0 +1,146 @@
+{% extends 'shared/base.html' %} 
+{% load static %}
+
+
+{% block base_content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<h4 class="mb-4 text-center text-uppercase subtitle" style="padding-top: 10px;" >Местонахождение и информация по грузу</h4>
+
+<div  class="container">
+    <div class="jumbotron"> 
+        <form action="{% url 'search' %}" onsubmit="event.preventDefault()" method="get">
+
+            <div class="form-group col-md-12 col-sm-12">
+                <input  name="q" class="form-control" type="text" placeholder="Введите номер заказа или накладной 123456789123g" id="inp">
+            </div>
+            <div class="col-md-12 col-12 ">
+            <input type="submit" style="background-color: #3D3935; border-color: #3D3935;"  id="btn" class="btn btn-primary btn-lg btn-block" value="Проверить" onclick="toSend()">
+            </div>
+            <dl class="dl-horizontal text-center pt-4 animate__animated animate__fadeInUp" 
+            id='data' style="display: none">   
+                <dd id="num"></dd>
+                <dd id="c_status" ></dd>
+                <dd id="data_status" ></dd>
+                <dd id="pay_status" ></dd>
+                <dd id="route" ></dd>
+                <dd id="delivery_date" ></dd>
+            </dl>
+        </form>
+    </div>
+</div>
+
+<script>
+const HOST = '511c-91-219-66-195.ngrok.io'
+
+const data = document.getElementById('data')
+
+const btn = document.getElementById('btn');
+const inp = document.getElementById('inp');
+
+const num = document.getElementById('num');
+const c_status = document.getElementById('c_status');
+const data_status = document.getElementById('data_status');
+const pay_status = document.getElementById('pay_status');
+const route = document.getElementById('route');
+const delivery_date = document.getElementById('delivery_date');
+
+const errorStyles = "border-color:#f71616; box-shadow: 0 0 7px #d45252;"
+console.log(num)
+
+function putData(res, data){
+
+    num.innerText = ''
+    c_status.innerText = ''
+    data_status.innerText = ''
+    pay_status.innerText = ''
+    route.innerText = ''
+    delivery_date.innerText = ''
+
+    if (!res) {
+        num.innerHTML = 'Извините, по данному номеру ничего найдено. Попробуйте еще раз'
+    } else {
+        num.innerHTML = '<b>Номер заказа: </b>' + data['tracking_number_client']
+        c_status.innerHTML = '<b>Статус груза: </b>' + data['status']
+        data_status.innerHTML = '<b>Дата получения статуса: </b>' + data['status_date']
+        route.innerHTML = '<b>Направление: </b>' + data['route']
+        pay_status.innerHTML = '<b>Статус оплаты: </b>' + data['status_pay']
+        delivery_date.innerHTML = '<b>Предварительная дата доставки: </b>' + data['delivery_date']
+    }
+}
+
+    inp.oninput = () => {
+        inp.style.cssText = 'none'
+    }
+
+    inp.addEventListener('mouseenter', () =>{
+        inp.style.backgroundColor = 'rgb(233, 233, 233)'
+    })
+
+    inp.addEventListener('mouseleave', () =>{
+        inp.style.backgroundColor = 'white'
+    })
+
+
+function validateData(data){
+    console.log(data)
+    if (data === 'trak not found'){
+        return false
+    } else {
+        return true
+    }
+}
+
+function toSend() {
+    if (!inp.value){
+        inp.style.cssText = errorStyles
+        return;
+    }
+    const struct = {
+      trak: inp.value
+    };
+    data.style.display = 'block'
+    postData(`http://${HOST}/api/get-track-info/`, struct)
+        .then((data) => {
+            console.log(data)
+            const res = validateData(data.status)
+            putData(res, data);
+        });
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+async function postData(url, data) {
+    const response = await fetch(url, {
+    method: 'POST',
+    cache: 'no-cache', 
+    credentials: 'same-origin',
+    headers: {
+        'Content-Type': 'application/json',
+        "X-CSRFTOKEN":  csrftoken
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer', 
+    body: JSON.stringify(data) 
+    });
+    return await response.json(); 
+}
+
+</script> 
+{% endblock %}
+

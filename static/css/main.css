@@ -1,0 +1,55 @@
+@font-face {
+    font-family: Gotham ProBold;
+    src: url("/static/fonts/ofont.ru_Gotham\ Pro.ttf")
+}
+
+.navbar {
+    font-family: Gotham ProBold;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #3D3935;
+}
+
+.footer.bg-light.text-center.text-lg-start {
+    background: grey;
+}
+
+.text1 {
+    font-family: Gotham ProBold;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 27px;
+}
+
+.text2 {
+    font-family: Gotham ProBold;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 27px;
+}
+
+.card-text text3 {
+    position: relative;
+    background-color: red;
+}
+
+#card-type:hover {
+    box-shadow: 0px 0px 150px #000000;
+    z-index: 2;
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1.5);
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1.5);   
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1.5);
+    transition: all 200ms ease-in;
+    transform: scale(1.5); 
+}

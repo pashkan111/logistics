@@ -1,0 +1,760 @@
+{% extends "shared/base.html" %} 
+{% load static %}
+
+
+{% block base_content %}
+<style>
+
+#btn {
+    cursor: pointer;
+        position: relative;
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1); 
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1); 
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1);
+    transition: all 200ms ease-in;
+    transform: scale(1); 
+}
+
+#btn:hover {
+    box-shadow: 0px 0px 10px #000000;
+    z-index: 2;
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1.5);
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1.5);   
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1.5);
+    transition: all 200ms ease-in;
+    transform: scale(1.007);
+}
+
+#order {
+    cursor: pointer;
+        position: relative;
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1); 
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1); 
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1);
+    transition: all 200ms ease-in;
+    transform: scale(1); 
+}
+
+#order:hover {
+    box-shadow: 0px 0px 10px #000000;
+    z-index: 2;
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1.5);
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1.5);   
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1.5);
+    transition: all 200ms ease-in;
+    transform: scale(1.007);
+}
+
+.tip {
+  margin-top: 8px;
+  border: 1px solid;
+  border-radius: 8px;
+  background-color: #ff9c76;
+  z-index: 100;
+  overflow-y: auto;
+  {% comment %} display: none; {% endcomment %}
+  position: absolute;
+  padding: 10px 10px;
+}
+
+</style>
+<h4 class="mb-4 text-center text-uppercase subtitle" style="margin-top: 55px;">Калькулятор</h4>
+<div class="container">
+    <div class="jumbotron" style="y-index: 1; z-index: 1; position: relative;
+     display: inline-block; ">
+    <form action="{% url 'calc' %}"  method="POST" >
+      {% csrf_token %}
+        <div class="row mb-3">
+            <div class="form-group col-md-6 col-sm-6">
+                {% comment %} <p class="cityfrom_p">Откуда</p> {% endcomment %}
+                <label for="cityfrom">Откуда</label>
+                <input placeholder="Откуда" type="text" class="form-control" id="cityfrom" required="" />
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+                <label for="cityto">Куда</label>
+                <input placeholder="Куда" type="text" class="form-control"  id="cityto" required=""/>
+            </div>
+            <div class="form-group col-md-4 col-sm-6">
+                <label for="quantity">Количество мест</label>
+                <input placeholder="Кол-во мест, шт" type="number" required class="form-control" id="quantity" maxlength="2" min="1"/>
+            </div>
+            <div class="form-group col-md-4 col-sm-6" id="id_weight">
+              <label for="weight">Вес груза</label>
+              <input placeholder="Вес груза, кг" type="number" class="form-control" id="weight" max='1000' min="0"/>
+                <div class="tip" id="for_weigth" style="display: none;">
+                    Негабарит. Доставка возможна по предварительному согласованию
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-6">
+              <label for="volume">Объем</label>
+              <input placeholder="Объем, м3" type="number"  class="form-control" id="volume" required="" maxlength="5" min="0"/>
+            </div>
+
+            <div class="form-group col-md-4 col-sm-6">
+              <label for="length">Длина</label>
+              <input placeholder="Длина, м" type="number"  class="form-control" id="length" maxlength="5" min="0"/>
+                <div class="tip" id="for_length" style="display: none;">
+                    Только один из параметров: Д, Ш, В может быть более 3м
+                </div>
+            
+            </div>
+            <div class="form-group col-md-4 col-sm-6">
+              <label for="width">Ширина</label>
+              <input placeholder="Ширина, м" type="number"  class="form-control" id="width" maxlength="5" min="0"/>
+                <div class="tip" id="for_width" style="display: none;">
+                    Только один из параметров: Д, Ш, В может быть более 3м
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-6">
+              <label for="height">Высота</label>
+              <input placeholder="Высота, м" type="number"  class="form-control" id="height" maxlength="5" min="0"/>
+                <div class="tip" id="for_height" style="display: none;">
+                    Только один из параметров: Д, Ш, В может быть более 3м
+                </div>
+            </div>
+    
+            <div class="custom-control custom-checkbox">
+            <div class="form-group form-check" style="visibility: visible;">
+                <input type="checkbox" id="delivery_from"  class="custom-control-input"/>
+                <label class="custom-control-label" for="delivery_from">Необходимо забрать груз с адреса</label>
+            </div>
+            <div class="form-group form-check" style="visibility: visible;">
+                <input type="checkbox" id="delivery_to"  class="custom-control-input"/>
+                <label class="custom-control-label" for="delivery_to">Необходимо доставить груз до адреса</label>
+            </div>
+            </div>
+
+            <table class="table" style="width: 100%">
+                <colgroup>
+                  <col span="1" style="width: 20%;">
+                  <col span="1" style="width: 40%;">
+                  <col span="1" style="width: 40%;">
+                </colgroup>
+                <thead style="text-align: center"> 
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Стоимость</th>
+                    <th scope="col">Срок</th>
+                  </tr>
+                </thead>
+                <tbody style="text-align: center">
+                  <tr>
+                    <th scope="row">Стандарт</th>
+                    <td id="standartCost"></td>
+                    <td id="standartTerm"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" >Экспресс</th>
+                    <td id="expressCost"></td>
+                    <td id="expressTerm"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Конверт</th>
+                    <td id="convertCost"></td>
+                    <td id="convertTerm"></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <div class="col-md-12 col-12 ">
+                <input type="button" style="background-color: #3D3935; border-color: #3D3935;"  id="btn" class="btn btn-primary btn-lg btn-block" value="Рассчитать" onclick="calc()"/>
+              </div>
+            </div>
+
+    </form>
+{% comment %} action="{% url 'order' %}" {% endcomment %}
+      
+      <a type="button" style="background-color: #3D3935; color: white; border-color: #3D3935; display: none" id="order" class="btn btn-primary btn-lg btn-block" >Оформить заявку</a>
+
+    </div>
+</div>
+
+
+<script>
+
+const HOST = '127.0.0.1:8000'
+
+const cities=[]
+
+const cityfrom = document.getElementById('cityfrom')
+const cityto = document.getElementById('cityto');
+const volume = document.getElementById('volume');
+const weight = document.getElementById('weight');
+const quantity = document.getElementById('quantity')
+const length = document.getElementById('length')
+const width = document.getElementById('width')
+const heigth = document.getElementById('height')
+
+
+const standartCost = document.getElementById('standartCost')
+const standartTerm = document.getElementById('standartTerm')
+const expressCost = document.getElementById('expressCost')
+const expressTerm = document.getElementById('expressTerm')
+const convertTerm = document.getElementById('convertTerm')
+const convertCost = document.getElementById('convertCost')
+
+const delivery_from = document.getElementById('delivery_from')
+const delivery_to = document.getElementById('delivery_to')
+
+const csrftoken = getCookie('csrftoken');
+const errorStyles = "border-color:#f71616; box-shadow: 0 0 7px #d45252;"
+const commonStyles = "border: 1px solid #ced4da; box-shadow: none;"
+const acceptedStyles = "border: 1px solid #5FA92A; box-shadow: none;"
+
+const tip_weigth = document.getElementById('for_weigth')
+const tip_heigth = document.getElementById('for_height')
+const tip_length = document.getElementById('for_length')
+const tip_width = document.getElementById('for_width')
+
+const tips = [
+  tip_weigth,
+  tip_heigth,
+  tip_length,
+  tip_width
+]
+
+
+let checker = false
+
+
+document.addEventListener("click", function (e) {
+  if (checker){
+    tips.forEach((el) => {
+        el.style.display = 'none'
+    })
+  }
+}); 
+
+
+const inputs = [
+  cityfrom,
+  cityto,
+  volume,
+  weight,
+  quantity,
+  length,
+  width,
+  heigth
+]
+
+
+length.addEventListener('input', (e) => {
+    const val = event.target.value
+    const vol = val*width.value*heigth.value
+    volume.value=vol
+  })
+
+width.addEventListener('input', (e) => {
+    const val = event.target.value
+    const vol = val*length.value*heigth.value
+    volume.value=vol
+  })
+
+heigth.addEventListener('input', (e) => {
+    const val = event.target.value
+    const vol = val*length.value*width.value
+    volume.value = vol
+  })
+
+
+
+// класс проверяет на заполнение полей городов, веса и объема
+
+class ValidatorCompulsoryFields
+{
+  constructor(weigth){
+    this.fieldsCities = [
+      cityfrom,
+      cityto
+    ]
+
+    this.fieldsParams = [
+      volume,
+      weight
+    ]
+
+    this.arrOfErrors = new Array
+  }
+
+  checkFields()
+  {
+    const arr = [
+      ...this.fieldsCities, ...this.fieldsParams
+    ]
+    arr.forEach((el) => {
+      el.style.cssText = acceptedStyles
+    })
+  }
+
+  validateParams()
+  {
+    this.fieldsParams.forEach((el) => {
+      if (el.value == '' || el.value == 0){
+        el.style.cssText = errorStyles
+        this.arrOfErrors.push(el)
+      } else {
+        el.style.cssText = acceptedStyles
+      }
+    })
+  }
+
+  validateCities()
+  {
+    this.fieldsCities.forEach((el) => {
+      if (cities.indexOf(el.value) === -1){
+        el.style.cssText = errorStyles
+        this.arrOfErrors.push(el)
+      } else {
+        el.style.cssText = acceptedStyles
+      }
+    })
+  }
+
+  startValidating()
+  {
+    this.checkFields()
+    this.validateParams()
+    this.validateCities()
+    return this.arrOfErrors
+  }
+
+}
+
+
+// 
+class Validator 
+{
+  constructor(weigth, length, width, heigth, quantity){
+    this.objForLengths = {
+      3: 0.15,
+      4: 0.25,
+      5: 0.4
+    }
+
+    this.objForWeigth = {
+      1000: 0.15,
+      1500: 0.25
+    }
+
+    this.finalPrice = 100
+    this.showMessage = false
+    this.message1 = 'Негабарит. Доставка возможна по предварительному согласованию'
+    this.message2 = 'Только один из параметров: Д, Ш, В может быть более 3м'
+    
+    this.weigth = weigth
+    this.length = length
+    this.width = width
+    this.heigth = heigth
+    this.quantity = quantity
+
+    this.arrOfWarnings = new Array
+  }
+
+  validateParams()
+  {
+    const arr = [
+      this.heigth,
+      this.length,
+      this.width
+    ]
+    arr.some((el, i) => {
+      if (el.value>3) {
+        arr.splice(i, i)
+        return;
+      }
+    })
+    this.putErrorMessage(arr)
+  }
+
+
+  putErrorMessage(arr)
+  {
+    arr.forEach((el) => {
+      const elem = document.getElementById(`for_${el.id}`)
+      console.log(elem)
+      elem.style.display = 'block'
+      if (checker){
+        setTimeout(() => {
+        checker = false
+      }, 500)
+      } else {
+        setTimeout(() => {
+          checker = true
+      }, 500)
+      }
+      
+    })
+  } 
+
+  checkWeigth()
+  {
+    const value = +this.weigth.value
+    let quantity = +this.quantity.value
+    if (quantity == 0 || quantity == ''){
+      quantity = 1
+    }
+    const valToWorkWith = value/quantity
+    if (valToWorkWith < 1000 && valToWorkWith >= 500){
+      this.finalPrice = this.finalPrice * 1.15
+    } else if (valToWorkWith >= 1000 && valToWorkWith < 1500){
+      this.finalPrice = this.finalPrice * 1.25
+    } else if (valToWorkWith >= 1500){
+      this.showMessage = true
+      console.log(this.message)
+    }
+  }
+
+  checkParams()
+  {
+    const arr = [
+      this.length, this.width, this.heigth
+    ]
+
+    arr.forEach((el) => {
+      const value = +el.value
+      if (value >= 3 && value < 4){
+        this.finalPrice = this.finalPrice * 1.15
+      } else if (value >= 4 && value < 5){
+        this.finalPrice = this.finalPrice * 1.25
+      } else if (value >= 5 && value < 6){
+        this.finalPrice = this.finalPrice * 1.4
+      } else if (value >= 6){
+        console.log(this.message, el)
+      }
+    })
+  }
+
+  printPrice()
+  {
+    return Math.round(this.finalPrice)/100
+  }
+
+}
+
+
+class ValidatorInterface extends Validator
+{
+    startValidating()
+  {
+    this.checkWeigth()
+    this.checkParams()
+    this.validateParams()
+  }
+} 
+
+
+inputs.forEach((el) => {
+  el.onmouseenter = () => {
+    el.style.backgroundColor = '#E9E9E9'
+  }
+  el.onmouseleave = () => {
+    el.style.backgroundColor = 'white'
+  }
+})
+
+window.onload = function(e){
+
+    fetch(`http://${HOST}/api/get-cities`)
+      .then((response) => {
+        return response.json();
+      }).then(function(data){
+        data.map(i => {
+          cities.push(i.name)
+        })
+      })
+
+    autocomplete(cityto, cities);
+    autocomplete(cityfrom, cities);
+   
+}
+
+
+function insertData(data, prices){
+    standartCost.innerHTML = `${+data['price_standart']*prices} руб`
+    standartTerm.innerHTML = makeText(data["times"]["term_standart_from"], data["times"]["term_standart_to"])
+    expressCost.innerHTML = `${+data['price_express']*prices} руб`
+    makeText(data["times"]["term_express_from"], data["times"]["term_express_to"])
+    expressTerm.innerHTML = makeText(data["times"]["term_express_from"], data["times"]["term_express_to"])
+    convertTerm.innerHTML = makeText(data["times"]["term_standart_from"], data["times"]["term_standart_to"])
+    convertCost.innerHTML = `${data['convert_price']} руб`
+    return true
+}
+
+function getButton(){
+    let orderBtn = document.getElementById('order')
+    let btn = document.getElementById('btn')
+    btn.style.backgroundColor = '#e9ecef'
+    btn.style.color = '#3D3935'
+    btn.style.boxShadow = 'none'
+    orderBtn.style.display = 'inline-block'
+}
+
+
+function checkTime(time1, time2){
+  if (time1 == time2){
+    return true
+  } else{
+    return false
+  }
+}
+
+function makeText(time1, time2){
+  const check = checkTime(time1, time2) 
+  if (!check){
+    return `от ${time1} до ${time2} дней`
+  } else{
+    define = defineTime(Number(time1))
+    return `${time1} ${define}`
+  }
+}
+
+function defineTime(time){
+    if(time==1){
+      return 'день'
+    }else if(time==2||time==3||time==4){
+      return 'дня'
+    }else if(time>4){
+      return 'дней'
+  }
+}
+
+const arr = [delivery_from, delivery_to]
+
+arr.forEach((el) => {
+  el.addEventListener('change', () => {
+    if (document.getElementById('order').style.display == 'none'){
+      return;
+    }
+    calc()
+  })
+})
+
+document.getElementById('delivery_from').style.backgroundColor = 'red'
+
+function calc(){
+  const struct = {
+      cityfrom: cityfrom.value,
+      cityto: cityto.value,
+      weight: weight.value,
+      volume: volume.value,
+      quantity: quantity.value,
+      delivery_from: delivery_from.checked,
+      delivery_to: delivery_to.checked
+  };
+
+
+    const v = new ValidatorInterface(
+    weight,
+    length,
+    width,
+    heigth,
+    quantity, 100, 100)
+    v.startValidating()
+    const prices = v.printPrice()
+    console.log(prices)
+
+    const valid = new ValidatorCompulsoryFields()
+    const checkFields = valid.startValidating()
+    console.log(checkFields)
+
+    if (checkFields.length === 0){
+      console.log(volume.value)
+        postData(`http://${HOST}/api/post-calc`, struct)
+           .then((data) => {
+             data = JSON.parse(data)
+             console.log(data)
+             ins = insertData(data, prices)
+             if (ins) {
+               getButton()
+             } else{
+               insertData(data, prices)
+             }
+           })
+       } else {
+          return;
+       }
+}
+
+
+const formOrder = document.getElementById('order')
+
+formOrder.addEventListener('click', (e) => {
+  const res = validateWeight()
+  if (res === false){
+    return;
+  }
+  const res2 = checkInputData()
+  if (res2 === false){
+    return;
+  }
+  const res3 = checkInputDataW()
+  if (res3 === false){
+    return;
+  }
+
+  saveLocalStorage()
+  formOrder.setAttribute('href', "{% url 'order' %}")
+})
+
+
+  
+function saveLocalStorage(){
+    const struct = {
+      cityfrom: cityfrom.value,
+      cityto: cityto.value,
+      weight: weight.value,
+      volume: volume.value,
+      quantity: quantity.value,
+      delivery_from: delivery_from.checked,
+      delivery_to: delivery_to.checked
+  };
+  const myStorage = window.localStorage;
+  const keys = Object.keys(struct)
+  keys.forEach((el) => {
+    myStorage.setItem(el, struct[el])
+  })
+}
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+  }
+    return cookieValue;
+}
+
+async function postData(url, data) {
+    const response = await fetch(url, {
+        method: 'POST',
+        cache: 'no-cache', 
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          "X-CSRFTOKEN":  csrftoken
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer', 
+        body: JSON.stringify(data) 
+    });
+      return await response.json(); 
+  }
+
+
+function autocomplete(inp, arr) {
+      inp.addEventListener("input", function(e) {
+        let a, b, i, val = this.value;
+        closeAllLists();
+        if (!val) {
+          return false;
+        } 
+        currentFocus = -1;
+        a = document.createElement("DIV");
+
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+
+
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    
+        inp.addEventListener("keydown", function(e) {
+          let x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            currentFocus++;
+            addActive(x);
+          } else if (e.keyCode == 38) { 
+            currentFocus--;
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+              /*and simulate a click on the "active" item:*/
+              if (x) x[currentFocus].click();
+            }
+          }
+    });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) {
+          return false
+        };
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (let i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        const x = document.getElementsByClassName("autocomplete-items");
+        for (let i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+  /*execute a function when someone clicks in the document:*/
+      document.addEventListener("click", function (e) {
+          closeAllLists(e.target);
+      });
+}
+</script> 
+
+<style>
+  .reveal{
+    visibility: visible;
+  }
+</style>
+{%endblock%}

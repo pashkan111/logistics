@@ -1,0 +1,2519 @@
+{% extends 'shared/base.html' %} 
+{% load crispy_forms_tags %}
+{% load static %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> 
+
+{% block base_content %}
+
+<h4 class="mb-4 text-center text-uppercase subtitle" style="margin-top: 55px;">Расчет и оформление заказа</h4>
+<div class="container" style="color: #3D3935;">
+  <div class="row">
+    <div class="col-md-9">
+  
+    <div class="jumbotron" style='overflow: auto;'>
+    <form id="form-post" action="{% url 'order' %}" method="POST" >
+      {% csrf_token %}
+        <div class="row">
+        <div style="display:none">
+          {{ form.category|as_crispy_field }} 
+        </div>
+            <div class="form-group col-md-6 col-sm-6">
+              {{ form.city_from|as_crispy_field }}         
+
+                  <div class="form-check form-check-inline">
+                    <input checked type="radio" class="form-check-input" id="addressFrom" name="inlineMaterialRadiosExample2" onclick="radioCheckFrom()">
+                    <label class="form-check-label" for="addressFrom">От адреса</label>
+                  </div>
+                  
+
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="termFrom" name="inlineMaterialRadiosExample2" onclick="radioCheckFrom()">
+                    <label class="form-check-label" for="termFrom">От терминала</label>
+                  </div>
+
+                  <div id="addressYes" >
+                    {{ form.address_from|as_crispy_field }}
+                  </div>
+                  <div id="termYes" style="display: none;">
+                    {{ form.terminal_from|as_crispy_field }}
+                  </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              <div class="ui-widget">
+              {{ form.city_to|as_crispy_field }}
+            </div>
+
+                    <div class="form-check form-check-inline">
+                   
+                        <input checked  type="radio" class="form-check-input" id="addressTo" name="inlineMaterialRadiosExample" onclick="radioCheckTo()" >
+                        <label class="form-check-label" for="addressTo">До адреса</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+        
+                        <input type="radio" class="form-check-input" id="termTo" name="inlineMaterialRadiosExample" onclick="radioCheckTo()">
+                        <label class="form-check-label" for="termTo">До терминала</label>
+                      </div>   
+                      
+                      <div id="addressToYes">
+                
+                        {{ form.address_to|as_crispy_field }}
+                      </div>
+                      <div id="termToYes" style="display: none;">
+                        {{ form.terminal_to|as_crispy_field }}
+                      </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group col-md-6 col-sm-6">
+              {{ form.date_cargo|as_crispy_field }}
+               
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              {{ form.type_transporation|as_crispy_field }}
+                
+            </div>
+            <div class="form-group col-md-6 col-sm-6">
+              {{ form.nature_cargo|as_crispy_field }}
+               
+            </div>
+
+            <div class="form-group col-md-3 col-sm-3">
+              {{ form.interval1|as_crispy_field }}
+            </div>
+            <div class="form-group col-md-3 col-sm-3">
+              {{ form.interval2|as_crispy_field }}
+            </div>
+
+            <div class="form-group col-md-12 col-sm-6">
+                <ul class="nav nav-tabs justify-content-center" id="ul-categories">
+                    <li class="nav-item" id="1place">
+                      <a id="1place_a" class="nav-link active" style="color: #007041;" data-toggle="tab" href="#onePlace">1 место</a>
+                    </li>
+                    <li class="nav-item" id="2place">
+                      <a id="2place_a" class="nav-link" style="color: #007041;" data-toggle="tab" href="#serveralPlaces">Несколько мест</a>
+                    </li>
+                    <li class="nav-item" id="docs">
+                      <a id="docs_a" class="nav-link" style="color: #007041;" data-toggle="tab" href="#documentation">Документы</a>
+                    </li>
+                </ul>
+                  <div class="tab-content p-3">
+                    <div class="tab-pane fade show active" id="onePlace">
+                        
+                            <div class="row">
+                              <div class="col-md-4 col-sm-6 " id='length_one'>
+                                {{ form.length_one|as_crispy_field }}
+                              </div>
+                              <div class="col-md-4 col-sm-6" id='width_one'>
+                                {{ form.width_one|as_crispy_field }}
+                              </div>
+                              <div class="col-md-4 col-sm-6" id='height_one'>
+                                {{ form.height_one|as_crispy_field }}
+                            </div>
+                        
+                            <div class="col-md-4 col-sm-6 ">
+                              {{ form.weight_one|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4 col-sm-6" id='volume_one'>
+                              {{ form.volume_one|as_crispy_field }}
+                            </div>
+                            </div>
+                         
+                    </div>
+                    <div class="tab-pane fade" id="serveralPlaces">
+                       
+                            <div class="row">
+                              <div class="col-md-4 col-sm-8 ">
+                                {{ form.some_weight|as_crispy_field }}
+                              </div>
+                              <div class="col-md-4 col-sm-8">
+                                {{ form.some_volume|as_crispy_field }}
+                              </div>
+                              <div class="col-md-4 col-sm-8">
+                                {{ form.some_place_quantity|as_crispy_field }}
+                            </div>
+                        
+                            <div class="col-md-4 col-sm-8 ">
+                              {{ form.some_longest|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4 col-sm-8">
+                              {{ form.some_widest|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4 col-sm-8">
+                              {{ form.some_highest|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3 col-sm-6 text-center">
+                                <br>
+                            </div>
+                            </div>
+                         
+                    </div>
+                    <div class="tab-pane fade" id="documentation">
+                        <div class="alert alert-warning" role="alert">
+                                В случае превышения данных по умолчанию, воспользуйтесь формой &nbsp;"1 место" !
+                        </div>
+                            <div class="row">
+                              <div class="col-md-6 col-sm-6 ">
+                                {{ form.document_length|as_crispy_field }}
+                              </div>
+                              <div class="col-md-6 col-sm-6">
+                                {{ form.document_width|as_crispy_field }}
+                              </div>
+                              <div class="col-md-6 col-sm-6">
+                                {{ form.document_height|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 col-sm-6 ">
+                              {{ form.document_weight|as_crispy_field }}
+                            </div>
+                            </div>
+                       
+                    </div>
+                  </div>
+            </div>
+                
+            <div class="accordion form-group col-md-12 col-sm-6 " id="accordionExample">
+                <div class="card z-depth-0 bordered">
+                  <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link font-weight-bold" type="button" style="color: #007041;" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                        Дополнительные услуги
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                       
+                            <div class="custom-control custom-checkbox">
+                                <div class="form-group form-check" id="ins" style="visibility: visible;" onclick="checkInsuranse()">
+                                  {{ form.insurance|as_crispy_field }}
+                                    <div class="form-group col-md-6 col-sm-6" style="display: none" id="decl_val">
+                                     {{ form.declared_value|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;">
+                                  {{ form.return_of_accompanying_documents|as_crispy_field }}
+                               
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;">
+                                  {{ form.sending_accompanying_documents|as_crispy_field }}
+                                    
+                                </div>
+                                <div class="form-group form-check" id="prr" style="visibility: visible;" onclick="checkPRR()">
+                                  {{ form.loading_and_unloading_sender|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="prrYes" style="display: none">
+                                    {{ form.service_lift_sender|as_crispy_field }}
+                                    {{ form.floor_sender|as_crispy_field }}
+                                    {{ form.carry_sender|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" id="prr1" style="visibility: visible;" onclick="checkPRR_r()">
+                                  {{ form.loading_and_unloading_recipient|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6"  id="prr1Yes" style="display: none">
+                                    {{ form.service_lift_recipient|as_crispy_field }}
+                                    {{ form.floor_recipient|as_crispy_field }}
+                                    {{ form.carry_recipient|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkPass()">
+                                  {{ form.pass_sender_territory|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="pass" style="display: none">
+                                    {{ form.order_per_hour|as_crispy_field }}
+                                    {{ form.order_per_day|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;">
+                                  {{ form.registration_for_shipment|as_crispy_field }}
+                                    
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkPaid()">
+                                  {{ form.paid_entry_sender_territory|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="paid" style="display: none">
+                                    {{ form.sum|as_crispy_field }}
+                                    {{ form.reimbursement_method|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkInternal()">
+                                  {{ form.internal_shipment_number|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="internal" style="display: none">
+                                    {{ form.info_internal_shipment_number|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkCOD()">
+                                  {{ form.cod|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="cod" style="display: none">
+                                    {{ form.cod_input|as_crispy_field }}
+                                  </div>
+                                    
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkSecond()">
+                                  {{ form.second_address|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="second" style="display: none">
+                                    {{ form.check_second_address|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;">
+                                  {{ form.delivery_confirmation|as_crispy_field }}
+                                    
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkPower()">
+                                  {{ form.power_of_attorney|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="power" style="display: none">
+                                    {{ form.info_proxy|as_crispy_field }}
+                                  </div>
+                                </div>
+                                <div class="form-group form-check" style="visibility: visible;" onclick="checkCall()">
+                                  {{ form.pre_call|as_crispy_field }}
+                                  <div class="col-md-6 col-sm-6" id="call" style="display: none">
+                                    {{ form.callback_one_hour|as_crispy_field }}
+                                    {{ form.callback_two_hour|as_crispy_field }}
+                                  </div>
+                                </div>
+                            </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card z-depth-0 bordered">
+                    <div class="card-header" id="headingTwo">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link collapsed font-weight-bold" type="button" style="color: #007041;" data-toggle="collapse"
+                          data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                          Упаковка груза
+                        </button>
+                      </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="custom-control custom-checkbox">
+                            <div class="form-group form-check" style="visibility: visible;" >
+                              {{ form.rigid_packaging|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='1'>
+                                {{ form.rigid_packaging_amount|as_crispy_field }}
+                              </div>
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" >
+                              {{ form.pallet_board|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='2'>
+                                {{ form.pallet_board_amount|as_crispy_field }}
+                              </div> 
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" onclick="test3()">
+                              {{ form.bag|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='3'>
+                                {{ form.bag_amount|as_crispy_field }}
+                              </div>  
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" onclick="test4()">
+                              {{ form.cardboard_box|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='4'>
+                                {{ form.cardboard_box_amount|as_crispy_field }}
+                                {% comment %} {{ form.cardboard_box_amount_70|as_crispy_field }}
+                                {{ form.cardboard_box_amount_100|as_crispy_field }} {% endcomment %}
+                              </div>   
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" onclick="test5()">
+                              {{ form.pallet|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='5'>
+                                {{ form.pallet_amount|as_crispy_field }}
+                              </div> 
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" >
+                              {{ form.strapping|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='6'>
+                                {{ form.strapping_amount|as_crispy_field }}
+                              </div>  
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" >
+                              {{ form.stretch|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='7'>
+                                {{ form.stretch_amount|as_crispy_field }}
+                              </div>  
+                            </div>
+                            <div class="form-group form-check" style="visibility: visible;" >
+                              {{ form.air_bubble|as_crispy_field }}
+                              <div class="col-md-6 col-sm-6" style="display: none" id='8'>
+                                {{ form.air_bubble_amount|as_crispy_field }}
+                              </div>  
+                            </div>
+                           
+                            </div>
+                      </div>
+                    </div>
+                  </div>
+                <div class="card z-depth-0 bordered">
+                  <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed font-weight-bold" type="button" style="color: #007041;" data-toggle="collapse"
+                        data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Участники грузоперевозок
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="collapseThree" class="collapse text-center" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+
+                            <div class="row">
+                                <div class="form-group col-md-6 col-sm-6">
+                                    <p class="font-weight-bold">Отправитель</p>
+
+                                        <div class="form-check form-check-inline">
+                                            <input checked  type="radio" class="form-check-input text-center" id="individual" name="inlineMaterialRadiosExample3" onclick="radioCheckFace()">
+                                            <label class="form-check-label" for="individual">Физическое лицо</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                          <input type="radio" class="form-check-input" id="entity" name="inlineMaterialRadiosExample3" onclick="radioCheckFace()">
+                                          <label class="form-check-label" for="entity">Юридическое лицо</label>
+                                        </div>
+                                          
+                                          <div id="individualYes" >
+                                            {{ form.fio_individual|as_crispy_field }}
+                                            {{ form.documents|as_crispy_field }}
+                                            {{ form.passport_individual|as_crispy_field }}
+                                            {{ form.phone_individual|as_crispy_field }}
+                                            {{ form.email_individual|as_crispy_field }}
+                                          </div>
+
+                                          <div style="display: none" id="entityYes" >
+                                            {{ form.fio_entity|as_crispy_field }}
+                                            {{ form.inn_entity|as_crispy_field }}
+                                            {{ form.contact_person_entity|as_crispy_field }}
+                                            {{ form.phone_entity|as_crispy_field }}
+                                            {{ form.email_entity|as_crispy_field }}
+                                           
+                                          </div>
+                                </div>
+
+
+                                <div class="form-group col-md-6 col-sm-6 text-center">
+                                    <p class="font-weight-bold">Получатель</p>
+                                   
+                    
+                                    <div class="form-check form-check-inline">
+                                        <input checked type="radio" class="form-check-input" id="individual1" name="inlineMaterialRadiosExample4" onclick="radioCheckFaceTo()">
+                                        <label class="form-check-label" for="individual1">Физическое лицо</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="form-check-input" id="entity1" name="inlineMaterialRadiosExample4" onclick="radioCheckFaceTo()">
+                                        <label class="form-check-label" for="entity1">Юридическое лицо</label>
+                                    </div>
+
+                                      <div id="individualYes1">
+                                        {{ form.fio_individual_p|as_crispy_field }}
+                                        {{ form.documents_p|as_crispy_field }}
+                                        {{ form.passport_individual_p|as_crispy_field }}
+                                        {{ form.phone_individual_p|as_crispy_field }}
+                                        {{ form.email_individual_p|as_crispy_field }}
+                    
+                                      </div>
+
+                                      <div style="display: none" id="entityYes1" >
+                                        {{ form.fio_entity_p|as_crispy_field }}
+                                        {{ form.inn_entity_p|as_crispy_field }}
+                                        {{ form.contact_person_entity_p|as_crispy_field }}
+                                        {{ form.phone_entity_p|as_crispy_field }}
+                                        {{ form.email_entity_p|as_crispy_field }}
+                                      </div>
+
+                                </div>
+                                <div class="form-group col-md-6 col-sm-6 text-center">
+                                    <div class="btn-group btn-group-toggle" data-toggle="checkbox">
+                                      {{form.sender_payer|as_crispy_field }}
+                                    </div>
+
+                                  <div id="third_side1" style="display: none"> 
+                                  
+                                    <div class="form-check form-check-inline">
+                                      <input checked  type="radio" class="form-check-input text-center" id="individual_third" name="1" onclick="clickFis()">
+                                      <label class="form-check-label" for="individual_third">Физическое лицо</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                      <input type="radio" class="form-check-input" id="entity_third" name="1" onclick="clickFis()">
+                                      <label class="form-check-label" for="entity_third">Юридическое лицо</label>
+                                    </div>
+
+                                     <div id="individualThird">
+                                        {{ form.fio_individual_s_for_third_side|as_crispy_field }}
+                                        {{ form.documents_s_for_third_side|as_crispy_field }}
+                                        {{ form.passport_individual_s_for_third_side|as_crispy_field }}
+                                        {{ form.phone_individual_s_for_third_side|as_crispy_field }}
+                                        {{ form.email_individual_s_for_third_side|as_crispy_field }}
+                    
+                                      </div>
+
+                                      <div style="display: none" id="entityThird" >
+                                        {{ form.fio_entity_s_for_third_side|as_crispy_field }}
+                                        {{ form.inn_entity_s_for_third_side|as_crispy_field }}
+                                        {{ form.contact_person_entity_s_for_third_side|as_crispy_field }}
+                                        {{ form.phone_entity_s_for_third_side|as_crispy_field }}
+                                        {{ form.email_entity_s_for_third_side|as_crispy_field }}
+                                      </div>
+                                  </div>
+
+                                </div>
+
+                                <div class="form-group col-md-6 col-sm-6 text-center">
+                                    <div class="btn-group btn-group-toggle" data-toggle="checkbox">
+                                      {{form.recipient_payer|as_crispy_field }}
+                                    </div>
+
+                                    <div id="third_side2" style="display: none"> 
+                                  
+                                    <div class="form-check form-check-inline">
+                                      <input checked  type="radio" class="form-check-input text-center" id="r_third_fis" name="2" onclick="clickSec()">
+                                      <label class="form-check-label" for="r_third_fis">Физическое лицо</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                      <input type="radio" class="form-check-input" id="r_third_ent" name="2" onclick="clickSec()">
+                                      <label class="form-check-label" for="r_third_ent">Юридическое лицо</label>
+                                    </div>
+
+                                     <div id="individualThird_r">
+                                        {{ form.fio_individual_p_for_third_side|as_crispy_field }}
+                                        {{ form.documents_p_for_third_side|as_crispy_field }}
+                                        {{ form.passport_individual_p_for_third_side|as_crispy_field }}
+                                        {{ form.phone_individual_p_for_third_side|as_crispy_field }}
+                                        {{ form.email_individual_p_for_third_side|as_crispy_field }}
+                    
+                                      </div>
+
+                                      <div style="display: none" id="entityThird_r" >
+                                        {{ form.fio_entity_p_for_third_side|as_crispy_field }}
+                                        {{ form.inn_entity_p_for_third_side|as_crispy_field }}
+                                        {{ form.contact_person_entity_p_for_third_side|as_crispy_field }}
+                                        {{ form.phone_entity_p_for_third_side|as_crispy_field }}
+                                        {{ form.email_entity_p_for_third_side|as_crispy_field }}
+                                      </div>
+                                  </div>
+                                      
+                                    </div>
+                                    
+                                    <div class="form-group col-md-12 col-sm-6">
+                                      {{ form.pay_cargo|as_crispy_field }}
+                                      {{ form.comment|as_crispy_field }}
+                                    </div>
+                            </div>
+                         
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:none">
+            {{ form.price|as_crispy_field }}
+              </div>
+            <!--Button-->
+              <button  type="submit" style="background-color: #3D3935; border-color: #3D3935;"  class="btn btn-primary btn-lg btn-block">Оформить заказ</button>
+            
+        </div>
+    </form>
+    </div>
+    {% comment %} </div> {% endcomment %}
+
+    <div class="col-md-3" id="check-element">
+
+        <div class="card" style="width: 17rem; color: #292323; 
+            position: sticky; top: 0">
+          <div class="card-body">
+            <h5 class="card-title" style="text-align: center">Расчет</h5>
+            <div style="border-bottom: 1px solid; height: 25px">
+              <p class="card-text" style="display:inline-block; margin-right:49px" id="cargo">Забор груза:</p>
+              <p class="card-text" style="display:inline-block;" ><b id="address-price"></b></p>
+            </div>
+
+            <div style="border-bottom: 1px solid; height: 25px; margin-top:2px">
+              <p class="card-text" style="display:inline-block; margin-right:27px" id="cargo">Доставка груза:</p>
+              <p class="card-text" style="display:inline-block;" ><b id="to-address-price"></b></p>
+            </div> 
+
+            <div style="border-bottom: 1px solid; height: 43px; margin-top:2px; margin-bottom:5px">
+              <div style="display:inline-block; width: 140px">
+                <p class="card-text" style="display:inline-block; margin-right:5px;line-height:20px" id="cargo">Межтерминальная перевозка:</p>
+              </div>
+              <div style="display:inline-block">
+                <p class="card-text" style="display:inline; margin-right:1px" ><b id="inter_terminal_price"></b></p>
+              </div>
+            </div>
+ 
+            <h5 style="margin-bottom: 4px ;" class="card-title">Дополнительные услуги</h5>
+            <div id='dops'>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Страховка</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Возврат сопроводительных документов</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Отправка сопроводительных документов</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Погрузо-разгрузочные работы у отправителя</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Погрузо-разгрузочные работы у получателя</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Подтверждение доставки</p>
+              {% comment %} <p class="card-text" style="display: none; margin: 0 auto; font-size: 13px">Заезд на второй адрес</p> {% endcomment %}
+            </div>
+            <h5 style="margin-top: 10px; margin-bottom: 4px" class="card-title">Упаковка груза</h5>
+            <div id='packings'>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Жесткая упаковка</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Паллетный борт</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Мешок</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Картонная коробка</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Палет</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Стреппинг</p>
+              <p class="card-text" style="display: none; margin: 0 auto; font-size: 14px">Стрейч - пленка</p>
+              <p class="card-text" style="display:none; margin: 0 auto; font-size: 14px">Воздушно - пузырьковая пленка</p>
+            </div>
+            <h5 class="card-title" style="margin-top: 10px; margin-bottom: 5px" >Сроки</h5>
+            <p id="standart_p" class="card-text" style="margin: 0 auto;">Стандарт: <strong style="margin-left: 40px" id="standart"></strong></p>
+            <p id="express_p" class="card-text" style="margin: 0 auto; display: none">Экспресс: <strong style="margin-left: 40px" id="express"></strong></p>
+            <p id="konvert_p" class="card-text" style="margin: 0 auto; display: none">Конверт: <strong style="margin-left: 40px" id="konvert"></strong></p>
+              <h5 class="card-title" style="margin-top: 10px; margin-bottom: 5px" >Общая стоимость</h5>
+              <div style="text-align: center"><h3 id="final_price" style=" display:inline-block">0</h3><h3 style=" display: inline-block"> &nbspруб</h3></div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/css/suggestions.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.6.0/dist/js/jquery.suggestions.min.js"></script>
+
+<script type="text/javascript">
+
+
+
+//КОНСТАНТЫ
+
+const price = document.getElementById('final_price')
+
+const cityto = document.querySelector('#id_city_to')
+const cityfrom = document.querySelector('#id_city_from')
+const weightto = document.querySelector('#id_weight_one')
+const weightfrom = document.querySelector('#id_volume_one');
+const datecargo = document.querySelector('#id_date_cargo');
+const naturecargo = document.querySelector('#id_nature_cargo');
+const len = document.querySelector('#id_length_one')
+const wid = document.querySelector('#id_width_one')
+const hei = document.querySelector('#id_height_one')
+
+
+const someweight = document.querySelector('#id_some_weight')
+const somevolume = document.querySelector('#id_some_volume')
+const someplacequantity = document.querySelector('#id_some_place_quantity')
+const longest = document.querySelector('#id_some_longest')
+const widest = document.querySelector('#id_some_widest')
+const highest = document.querySelector('#id_some_highest')
+
+const adr1 = document.querySelector('#id_address_to')
+const adr2 = document.querySelector('#id_address_from')
+
+const fromAdr = document.querySelector('#addressFrom')
+const fromTerm = document.querySelector('#termFrom')
+
+const toAdr = document.querySelector('#addressTo')
+const toTerm = document.querySelector('#termTo')
+
+const interval1 = document.getElementById('id_interval1')
+const interval2 = document.getElementById('id_interval2')
+
+
+const declaredValue = document.getElementById('id_declared_value')
+
+const insurance = document.getElementById('id_insurance')
+const returnOfAccompanyingDocuments = document.getElementById('id_return_of_accompanying_documents')
+const sendingAccompanyingDocuments = document.getElementById('id_sending_accompanying_documents')
+const loadingAndUnloadingSender = document.getElementById('id_loading_and_unloading_sender')
+
+const floorSender = document.getElementById('id_floor_sender')
+const carrySender = document.getElementById('id_carry_sender')
+
+const loadingAndUnloadingRecipient = document.getElementById('id_loading_and_unloading_recipient')
+
+const floorRecipient = document.getElementById('id_floor_recipient')
+const carryRecipient = document.getElementById('id_carry_recipient')
+
+const passSenderTerritory = document.getElementById('id_pass_sender_territory')
+const registrationForShipment = document.getElementById('id_registration_for_shipment')
+const paidEntrySenderTerritory = document.getElementById('id_paid_entry_sender_territory')
+
+const id_sum = document.getElementById('id_sum')
+const reimbursementMethod = document.getElementById('id_reimbursement_method')
+
+const internalShipmentNumber = document.getElementById('id_internal_shipment_number')
+const cod = document.getElementById('id_cod')
+const deliveryConfirmation = document.getElementById('id_delivery_confirmation')
+const powerOfAttorney = document.getElementById('id_power_of_attorney')
+const preCall = document.getElementById('id_pre_call')
+
+
+const rigidPackaging = document.getElementById('id_rigid_packaging')
+const palletBoard = document.getElementById('id_pallet_board')
+const bag = document.getElementById('id_bag')
+const cardboardBox = document.getElementById('id_cardboard_box')
+const pallet = document.getElementById('id_pallet')
+const strapping = document.getElementById('id_strapping')
+const stretch = document.getElementById('id_stretch')
+const airBubble = document.getElementById('id_air_bubble')
+
+
+const individual = document.getElementById('individual')
+const entity = document.getElementById('entity')
+
+const fioIndividual = document.getElementById('id_fio_individual')
+const passportIndividual = document.getElementById('id_passport_individual')
+const emailIndividual = document.getElementById('email_individual')
+const phoneIndividual = document.getElementById('id_phone_individual')
+
+const fioIntity = document.getElementById('id_fio_entity')
+const innEntity = document.getElementById('id_inn_entity')
+const contactPersonEntity = document.getElementById('id_contact_person_entity')
+const emailEntity = document.getElementById('id_email_entity')
+const phoneEntity = document.getElementById('id_phone_entity')
+
+
+const individual1 = document.getElementById('individual1')
+const entity1 = document.getElementById('entity1')
+
+const fioIndividual1 = document.getElementById('id_fio_individual_p')
+const passportIndividual1 = document.getElementById('id_passport_individual_p')
+const emailIndividual1 = document.getElementById('id_email_individual_p')
+const phoneIndividual1 = document.getElementById('id_phone_individual_p')
+
+const fioIntity1 = document.getElementById('id_fio_entity_p')
+const innEntity1 = document.getElementById('id_inn_entity_p')
+const contactPersonEntity1 = document.getElementById('id_contact_person_entity_p')
+const emailEntity1 = document.getElementById('id_email_entity_p')
+const phoneEntity1 = document.getElementById('id_phone_entity_p')
+
+let cities = []
+
+
+const place1 = document.getElementById('1place_a')
+const place2 = document.getElementById('2place_a')
+const docs = document.getElementById('docs_a')
+const category = document.getElementById('id_category')
+
+
+
+const senderIndividualThirdCheck = document.getElementById('individual_third')
+const senderEntityThirdCheck = document.getElementById('entity_third')
+
+const senderIndividualThirdDiv = document.getElementById('individualThird')
+const senderEntityThirdDiv = document.getElementById('entityThird')
+
+const senderThirdCheck = document.getElementById('id_sender_payer_3')
+
+
+const senderFioIndividual = document.getElementById('id_fio_individual_s_for_third_side')
+const senderPassportIndividual = document.getElementById('id_passport_individual_s_for_third_side')
+const senderPhoneIndividual = document.getElementById('id_phone_individual_s_for_third_side')
+
+const senderFioEntity = document.getElementById('id_fio_entity_s_for_third_side')
+const senderInnEntity = document.getElementById('id_inn_entity_s_for_third_side')
+const senderContactEntity = document.getElementById('id_contact_person_entity_s_for_third_side')
+const senderPhoneEntity = document.getElementById('id_phone_entity_s_for_third_side')
+
+
+
+const recipientIndividualThirdCheck = document.getElementById("r_third_fis")
+const recipientEntityThirdCheck = document.getElementById("r_third_ent")
+
+const recipientIndividualThirdDiv = document.getElementById('individualThird_r')
+const recipientEntityThirdDiv = document.getElementById('entityThird_r')
+
+const recipientThirdCheck = document.getElementById('id_recipient_payer_3')
+
+
+const recipientFioIndividual = document.getElementById('id_fio_individual_p_for_third_side')
+const recipientPassportIndividual = document.getElementById('id_passport_individual_p_for_third_side')
+const recipientPhoneIndividual = document.getElementById('id_phone_individual_p_for_third_side')
+
+const recipientFioEntity = document.getElementById('id_fio_entity_p_for_third_side')
+const recipientInnEntity = document.getElementById('id_inn_entity_p_for_third_side')
+const recipientContactEntity = document.getElementById('id_contact_person_entity_p_for_third_side')
+const recipientPhoneEntity = document.getElementById('id_phone_entity_p_for_third_side')
+
+const typeTransporation = document.getElementById('id_type_transporation')
+
+
+const errorStyles = "border-color:#f71616; box-shadow: 0 0 7px #d45252;"
+const inputStyles = "border:1px solid blue; box-shadow:0 0 5px blue;"
+// Упаковка груза
+weightfrom.value = 0.001
+weightto.value = 1
+
+const HOST = '511c-91-219-66-195.ngrok.io'
+
+const lstOfPackings = [
+  rigidPackaging,
+  palletBoard,
+  bag,
+  cardboardBox,
+  pallet,
+  strapping,
+  stretch,
+  airBubble,
+]
+
+const packings = Array.from(document.getElementById('packings').children)
+
+const packingsPrices = [
+  600,
+  600,
+  80,
+  100,
+  160,
+  100,
+  150,
+  150,
+]
+
+const rigidPackagingAmount = document.getElementById('id_rigid_packaging_amount')
+const palletBoardAmount = document.getElementById('id_pallet_board_amount')
+const bagAmount = document.getElementById('id_bag_amount')
+const cardboardboxAmount = document.getElementById('id_cardboard_box_amount')
+{% comment %} const cardboardboxAmount_70 = document.getElementById('id_cardboard_box_amount_70')
+const cardboardboxAmount_100 = document.getElementById('id_cardboard_box_amount_100') {% endcomment %}
+const palletAmount = document.getElementById('id_pallet_amount')
+const strappingAmount = document.getElementById('id_strapping_amount')
+const stretchAmount = document.getElementById('id_stretch_amount')
+const airbubbleAmount = document.getElementById('id_air_bubble_amount')
+
+
+const counts = [
+  rigidPackagingAmount,
+  palletBoardAmount,
+  bagAmount,
+  cardboardboxAmount,
+  palletAmount,
+
+  strappingAmount,
+  stretchAmount,
+  airbubbleAmount
+]
+
+const packingsCheckbox = [
+  rigidPackaging,
+  palletBoard,
+  strapping,
+  stretch,
+  airBubble,
+]
+
+const c = [
+  rigidPackagingAmount,
+  palletBoardAmount,
+  strappingAmount,
+  stretchAmount,
+  airbubbleAmount
+]
+
+
+setTimeout(() => {
+document.querySelectorAll('input').forEach((el) => {
+  el.addEventListener('change', () => {
+    el.style.borderColor = 'green'
+  })
+  if (el.value && el.value != 0) {
+    {% comment %} el.style.border = '1px solid #ced4da' {% endcomment %}
+    el.style.borderColor = 'green'
+  }
+})
+}, 500)
+
+
+
+somevolume.addEventListener('change', (e) => {
+   const value = Math.ceil(e.target.value)
+
+  c.forEach((el, i) => {
+    if (value === 0 || !value){
+      el.value = 1
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    } else {
+      el.value = value
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    }
+  })
+})
+
+somevolume.addEventListener('input', (e) => {
+   const value = Math.ceil(e.target.value)
+
+  c.forEach((el, i) => {
+    if (value === 0 || !value){
+      el.value = 1
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    } else {
+      el.value = value
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    }
+  })
+})
+
+
+weightfrom.addEventListener('change', (e) => {
+  const value = Math.ceil(e.target.value)
+
+  c.forEach((el, i) => {
+    if (value === 0 || !value){
+      el.value = 1
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    } else {
+      el.value = value
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    }
+  })
+})
+
+
+weightfrom.addEventListener('input', (e) => {
+  const value = Math.ceil(e.target.value)
+  c.forEach((el, i) => {
+    if (value === 0 || !value){
+      el.value = 1
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    } else {
+      el.value = value
+      if (packingsCheckbox[i].checked){
+        PriceTime(el, i)
+      }
+    }
+  })
+})
+
+
+setTimeout(() => c.forEach((el) => {
+  if (category.value === '1place'){
+    const volume = Math.ceil(weightfrom.value)
+    el.value = volume
+  } else if (category.value === '2place_a'){
+    const volume = Math.ceil(somevolume.value)
+    el.value = volume
+  }
+}), 1000)
+
+
+let inpAmount = 0
+let PriceNow = [
+  0, 0, 0, 0, 0, 0, 0, 0
+]
+
+changePriceTime()
+
+function changePriceTime(){
+  counts.forEach((el, i) => {
+    el.addEventListener('change', (e) => {
+      let value = e.target.value
+      console.log(value)
+      if (+value > inpAmount || !value){
+        const cotalPrice = value * packingsPrices[i]
+        let current = +price.innerText
+        const priceToPut = current + cotalPrice - PriceNow[i]
+        price.innerText = Math.round(priceToPut)
+        PriceNow[i] = Math.round(cotalPrice)
+      }
+    })
+  })
+}
+
+function PriceTime(el, i){
+  setTimeout(() => {
+      let value = el.value
+      console.log(value)
+      if (+value > inpAmount || !value){
+        const cotalPrice = value * packingsPrices[i]
+        let current = +price.innerText
+        const priceToPut = current + cotalPrice - PriceNow[i]
+        price.innerText = Math.round(priceToPut)
+        PriceNow[i] = Math.round(cotalPrice)
+      }
+  }, 100)
+}
+
+
+lstOfPackings.forEach((el, i) => {
+  el.addEventListener('change', () => {
+    if(el.checked){
+        const pr = Number(counts[i].value)
+        const priceToPut = pr * packingsPrices[i]
+        price.innerText = priceToPut + +price.innerText
+        PriceNow[i] = priceToPut
+        packings[i].style.display = 'block'
+    } else{
+        const newPrice = +price.innerText - PriceNow[i]
+        price.innerText = newPrice
+        packings[i].style.display = 'none'
+    }
+  })
+})
+
+
+function test1(){
+  const el = document.getElementById('1')
+  if(document.getElementById('id_rigid_packaging').checked){
+  el.style.display = 'block'
+  } else{
+    el.style.display = 'none'
+  }
+}
+
+ function test2(){
+  const el = document.getElementById('2')
+  if(document.getElementById('id_pallet_board').checked){
+  el.style.display = 'block'
+  } else{
+    el.style.display = 'none'
+  }
+} 
+
+function test3(){
+  const el = document.getElementById('3')
+  if(document.getElementById('id_bag').checked){
+  el.style.display = 'block'
+  } else{
+    el.style.display = 'none'
+  }
+}
+
+function test4(){
+  const el = document.getElementById('4')
+  if(document.getElementById('id_cardboard_box').checked){
+  el.style.display = 'block'
+  } else{
+    el.style.display = 'none'
+  }
+}
+
+function test5(){
+  const el = document.getElementById('5')
+  if(document.getElementById('id_pallet').checked){
+  el.style.display = 'block'
+  } else{
+    el.style.display = 'none'
+  }
+}
+
+
+const lstOfDopServices = [
+    insurance,
+    returnOfAccompanyingDocuments,
+    sendingAccompanyingDocuments,
+    loadingAndUnloadingSender,
+    loadingAndUnloadingRecipient,
+    deliveryConfirmation,
+]
+
+const dops = Array.from(document.getElementById('dops').children)
+
+//INSURANCE
+let declaredCost = 0
+
+function countPrice(num, el){
+      if(el.checked){
+        price.innerText = +price.innerText + num
+      }else{
+        price.innerText = +price.innerText - num
+      }
+  }
+
+function countProc(num){
+    declaredCost = +num * 0.25 / 100
+}
+
+//INSURANCE
+
+
+function checkedDops(el, i){
+  if (el.checked){
+    dops[i].style.display = 'block'
+  }else{
+    dops[i].style.display = 'none'
+  }
+}
+
+
+let weight = weightto.value
+let currentFloorS = 0
+let currentFloorR = 0
+
+
+{% comment %} function countInsurance(){
+  
+} {% endcomment %}
+
+// При смене веса менять цену
+
+lstOfDopServices.forEach((el, i) => {
+  el.addEventListener('change', () => {
+
+    if (el == returnOfAccompanyingDocuments) 
+    {
+      countPrice(250, el)
+      checkedDops(el, i)
+    }
+
+    else if (el == sendingAccompanyingDocuments)
+    {
+      countPrice(50, el)
+      checkedDops(el, i)
+    }
+
+    else if (el == cod)
+    {
+      countPrice(0, el)
+      checkedDops(el, i)
+    }
+
+    else if (el == deliveryConfirmation)
+    {
+      countPrice(125, el)
+      checkedDops(el, i)
+    }
+
+    else if (el == insurance)
+    {
+      const ins = document.getElementById('id_declared_value')
+      ins.oninput = (e) => {
+        console.log(e.target.value)
+      }
+      {% comment %} let price; {% endcomment %}
+      let checked = false
+      checkedDops(el, i)
+      if (el.checked){
+        //let currentPrice = +price.innerText
+        if (!checked){
+          price.innerText = +price.innerText + 50
+        }        
+        checked = true
+      } else {
+          declaredValue.value = 0
+          declaredValue.style.cssText = inputStyles
+          price.innerText = +price.innerText - 50
+      }
+    }
+
+    else if (el == loadingAndUnloadingSender)
+    {
+      checkedDops(el, i)
+      if (el.checked){
+        let wei;
+
+
+        if (category.value === '1place'){
+          wei = weightto.value
+        } else if (category.value === '2place_a'){
+          wei = someweight.value
+        }
+        const priceToCount = checkWeight(wei)
+        floorSender.addEventListener('input', (e) => {
+          const fl = +e.target.value
+          console.log(priceToCount, 'pricetocount')
+          let currentPrice = +price.innerText
+          if (fl >= currentFloorS){
+            const myPrice = checkFloor(fl, priceToCount)
+            console.log(myPrice, 'pr')
+            price.innerText = currentPrice + myPrice - checkFloor(currentFloorS, priceToCount)
+            currentFloorS = fl
+          } else {
+            const Pricewas = checkFloor(currentFloorS, priceToCount)
+            const Pricenow = checkFloor(fl, priceToCount)
+            price.innerText = currentPrice - Pricewas + Pricenow
+            currentFloorS = fl            
+          }
+        })
+      }
+    }
+
+    else if (el == loadingAndUnloadingRecipient)
+    {
+      checkedDops(el, i)
+      if (el.checked){
+        let wei;
+
+        if (category.value === '1place'){
+          wei = weightto.value
+        } else if (category.value === '2place_a'){
+          wei = someweight.value
+        }
+        const priceToCount = checkWeight(wei)
+        floorRecipient.addEventListener('input', (e) => {
+          const fl  = +e.target.value
+          let currentPrice = +price.innerText
+          if (fl >= currentFloorR){
+            const myPrice = checkFloor(fl, priceToCount)
+            price.innerText = currentPrice + myPrice - checkFloor(currentFloorR, priceToCount)
+            currentFloorR = fl
+          }else{
+            let currentPrice = +price.innerText
+            const Pricewas = checkFloor(currentFloorR, priceToCount)
+            const Pricenow = checkFloor(fl, priceToCount)
+            price.innerText = currentPrice - Pricewas + Pricenow
+            currentFloorR = fl            
+          }
+        })
+      }
+    }
+  })
+})
+
+
+function checkWeight(value){
+  console.log(value)
+  if(value<15){
+    return 0
+  }else if(value>15 && value<=50){
+    return 300
+  }else if(value>50 && value<=100){
+    return 400
+  }else if(value>100 && value<=250){
+    return 900
+  }else if(value>250 && value<=300){
+    return 1100
+  }else if(value>300 && value<=500){
+    return 1600
+  }else{
+    return false
+  }
+}
+
+
+function checkFloor(floor, price){
+  if(floor>=0){
+    const proc = price*20/100*floor
+    return proc
+  } else{
+    return price
+  }
+}
+
+
+function checkInput(newValue, currentValue){
+    if (newValue.length>currentValue.length) {
+      let currentPrice = +price.innerText
+      currentPrice += declaredCost
+      price.innerText = currentPrice
+      proc = input
+  } else {
+      let currentPrice = +price.innerText
+      currentPrice -= declaredCost
+      countProc(input)
+      currentPrice += declaredCost
+      price.innerText = currentPrice
+      proc = input
+    }
+}
+
+
+function postDataToServerFromLS()
+{
+      data = {
+        cityfrom: cityfrom.value,
+        cityto: cityto.value,
+        delivery_from: fromAdr.checked,
+        delivery_to: toAdr.checked,
+        weight: weightto.value? weightto.value : 0,
+        volume: weightfrom.value
+    }
+
+      postData(url=`http://${HOST}/api/post-calc`, data)
+      .then((data) => 
+        {
+          data = JSON.parse(data)
+          ins = insertData(data)
+        });
+}
+
+
+function clickFis(){
+  if (senderIndividualThirdCheck.checked){
+    senderIndividualThirdDiv.style.display = 'block'
+    senderEntityThirdDiv.style.display = 'none'
+  } else {
+    senderIndividualThirdDiv.style.display = 'none'
+    senderEntityThirdDiv.style.display = 'block'
+  }
+}
+
+
+
+function clickSec(){
+  if (recipientIndividualThirdCheck.checked){
+    recipientIndividualThirdDiv.style.display = 'block'
+    recipientEntityThirdDiv.style.display = 'none'
+  } else {
+    recipientEntityThirdDiv.style.display = 'block'
+    recipientIndividualThirdDiv.style.display = 'none'
+  }
+}
+
+
+document.getElementById('div_id_sender_payer').addEventListener('change', (e) => {
+  if (e.target.id === senderThirdCheck.id){
+    document.getElementById("third_side1").style.display = 'block'
+  } else {
+    document.getElementById("third_side1").style.display = 'none'
+  }
+})
+
+
+document.getElementById('div_id_recipient_payer').addEventListener('change', (e) => {
+  if (e.target.id === recipientThirdCheck.id){
+    document.getElementById("third_side2").style.display = 'block'
+  } else {
+    document.getElementById("third_side2").style.display = 'none'
+  }
+})
+
+document.getElementById('id_sender_payer_1').setAttribute('checked', 'true')
+document.getElementById('id_recipient_payer_2').setAttribute('checked', 'true')
+
+
+setTimeout(() => {
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+}, 500)
+
+
+
+window.onload = function(e)
+{
+  {% comment %} myStorage.clear() {% endcomment %}
+weightto.innerText = 1
+weightfrom.innerText = 0.001
+  function checkPlaces(quantity){
+    if (quantity>1){
+        document.getElementById('1place').classList.remove('active')
+        document.getElementById('1place_a').classList.remove('active')
+        document.getElementById('onePlace').classList = 'tab-pane fade'
+        document.getElementById('2place_a').classList.add('active')
+        document.getElementById('serveralPlaces').classList = 'tab-pane fade show active'
+        document.getElementById('2place').classList.add('active')
+        category.value = '2place_a'
+        
+        someweight.value = weightFromStorage
+        somevolume.value = volumeFromStorage
+        someplacequantity.value = quantity
+
+    } else if (!quantity || quantity === 1){
+        weightto.value = weightFromStorage
+        weightfrom.value = volumeFromStorage
+    }
+
+}
+
+  const lstOfInputs = document.querySelectorAll('input')
+  lstOfInputs.forEach((el) => {
+  el.onmouseenter = () => {
+    el.style.backgroundColor = '#E9E9E9'
+  }
+  el.onmouseleave = () => {
+    el.style.backgroundColor = 'white'
+  }
+})
+
+  fetch(`http://${HOST}/api/get-cities`)
+  .then((response) => {
+    return response.json();
+  }).then(function(data){
+    data.map(i => {
+      cities.push(i.name)
+    })
+  })
+
+  const myStorage = window.localStorage;
+  console.log(myStorage)
+    
+  const cityfromFromStorage = myStorage['cityfrom']
+  const citytoFromStorage = myStorage['cityto']
+  const weightFromStorage = myStorage['weight']
+  const volumeFromStorage = myStorage['volume']
+  const quantityFromStorage = myStorage['quantity']
+  const delivery_fromFromStorage = myStorage['delivery_from']
+  const delivery_toFromStorage = myStorage['delivery_to']
+
+
+if (cityfromFromStorage && citytoFromStorage){
+  cityto.value = citytoFromStorage
+  cityfrom.value = cityfromFromStorage
+  postDataToServerFromLS()
+  
+
+  if (delivery_fromFromStorage === 'false'){
+      fromAdr.removeAttribute('checked')
+      fromTerm.setAttribute('checked', 'true')
+    }
+
+    if (delivery_toFromStorage === 'false'){
+      toAdr.removeAttribute('checked')
+      toTerm.setAttribute('checked', 'true')
+    } 
+
+  } else {
+    fromAdr.setAttribute('checked', 'true')
+    toAdr.setAttribute('checked', 'true')
+}
+
+checkPlaces(quantityFromStorage)
+
+
+  
+  myStorage.clear()
+
+
+  autocomplete(cityto, cities);
+  autocomplete(cityfrom, cities); 
+
+  listOfInputs = document.querySelectorAll('input')
+  listOfSelects = document.querySelectorAll('select')
+  
+
+    for(let i=0; i<4; i++){
+      interval2[i].setAttribute("disabled", "disabled")
+    }
+}
+
+
+len.addEventListener('input', (e) => {
+    val = event.target.value
+    volume = val*wid.value*hei.value
+    document.getElementById('id_volume_one').value=volume
+  })
+
+wid.addEventListener('input', (e) => {
+    val = event.target.value
+    volume = val*len.value*hei.value
+    document.getElementById('id_volume_one').value=volume
+  })
+
+hei.addEventListener('input', (e) => {
+    val = event.target.value
+    volume = val*len.value*wid.value
+    document.getElementById('id_volume_one').value=volume
+  })
+
+
+interval1.addEventListener('change', (e) => {
+  console.log(category.value)
+    const index = e.target.selectedIndex
+    for(let i=0; i<interval2.length; i++){
+      interval2[i].removeAttribute("disabled")
+      interval2.value = interval2[i].value
+    }
+    for(let i=0; i<index; i++){
+      interval2[0].setAttribute("disabled", "true")
+      interval2[i+1].setAttribute("disabled", "true")
+    }
+})
+
+interval2.addEventListener('change', (e) => {
+    const index2 = e.target.selectedIndex
+    const index1 = interval1.selectedIndex
+    coef = findPriceByTime(index1, index2)
+    changePriceByTime(coef)
+})
+
+  function findPriceByTime(index1, index2){
+    const value = index2-index1
+    console.log(value)
+    if (value >= 3 && value <= 5){
+      return .5
+    } else if (value >= 1 && value <= 3){
+      return 1
+    } else if (value == 0){
+      return 1.2
+    } else if ([0, 1, 2].indexOf(index1) != -1 || [12, 13, 14, 15, 16, 17].indexOf(index1) != -1 ){
+      return 1
+    } else{
+      return 0
+    }
+  }
+
+
+let trigger = 1
+let timePrice = 0
+
+
+{% comment %} function changePriceByTime(coef){
+  if (trigger != 1){
+    const newPrice = trigger * coef
+    let currentPrice = Number(price.innerText)
+    const newP = currentPrice - timePrice + newPrice
+    price.innerText = newP
+    timePrice = newPrice
+  }
+} {% endcomment %}
+
+function changePriceByTime(coef){
+  if (trigger != 1) {
+    const newPrice = trigger * coef
+    console.log(newPrice, 'newPrice')
+    let currentPrice = Number(price.innerText)
+    const newP = currentPrice - timePrice + newPrice
+    price.innerText = newP
+    timePrice = newPrice
+  }
+}
+
+function defineTime(time){
+    if(time==1){
+      return 'день'
+    }else if(time==2||time==3||time==4){
+      return 'дня'
+    }else if(time>4){
+      return 'дней'
+  }
+}
+
+function checkTime(time1, time2){
+  if (time1 == time2){
+    return true
+  } else{
+    return false
+  }
+}
+
+function makePrice(value){
+  let currentPrice = Number(price.innerText)
+  const newP = +value + currentPrice
+  price.innerText = newP
+}
+
+function makeText(time1, time2){
+  const check = checkTime(time1, time2) 
+  if (!check){
+    return `от ${time1} до ${time2} дней`
+  } else{
+    define = defineTime(Number(time1))
+    return `${time1} ${define}`
+  }
+}
+
+
+
+function putDataIntoExpress(data){
+  const standart = document.getElementById("standart")
+  const express = document.getElementById("express")
+  const konvert = document.getElementById("konvert")
+  const typSt = makeText(data['times']["term_standart_from"], data['times']["term_standart_to"])
+  const typEx = makeText(data['times']["term_express_from"], data['times']["term_express_to"])
+        standart.innerText = typSt
+        express.innerText = typEx
+        konvert.innerText = typEx
+}
+
+
+function insertData(data, typeOfPrice=0){
+  putDataIntoExpress(data)
+  let value;
+  if (typeOfPrice === 0){
+    if (typeTransporation.selectedIndex === 0){
+      value = +data['price_standart']
+    } else if (typeTransporation.selectedIndex === 1){
+      value = +data['price_express']
+    } else if (typeTransporation.selectedIndex === 2){
+      value = +data["convert_price"]
+    }
+  } else {
+    value = +data[typeOfPrice]
+  }
+  if(trigger == 1){
+    standartPrice = value
+    makePrice(value)
+    trigger = value
+
+  } else {
+    let currentPrice = +price.innerText
+    currentPrice = currentPrice - +trigger
+    currentPrice += value
+    price.innerText = currentPrice
+    trigger = value
+  }
+
+  const interTerminalPrice = document.getElementById('inter_terminal_price').innerHTML = `${data['inter_terminal']} руб`
+  const addressPrice = document.getElementById('address-price').innerHTML = `${data['price_from_address']==false?0:data['price_from_address']} руб`
+  const ToaddressPrice = document.getElementById('to-address-price').innerHTML = `${data['price_to_address']==false?0:data['price_to_address']} руб`
+}
+
+  const lstOfRadios = [
+      fromAdr,
+      fromTerm,
+      toAdr,
+      toTerm,
+  ]
+
+
+function changeWeight(){
+  if(cityto.value && cityfrom.value){
+      postDataToServer() 
+    }
+}
+
+function changeVolume(){
+  if(cityto.value && cityfrom.value && weightto.value){
+      postDataToServer()
+    }
+}
+
+weightto.addEventListener('input', changeWeight)
+weightto.addEventListener('change', changeWeight)
+
+weightfrom.addEventListener('input', changeVolume)
+weightfrom.addEventListener('change', changeVolume)
+
+
+const Standart = document.getElementById("standart_p")
+const Express = document.getElementById("express_p")
+const Konvert = document.getElementById("konvert_p")
+
+function checkSelectedType(index){
+  postDataToServer()
+  if (index === 0) {
+      Standart.style.display = 'block'
+      Express.style.display = 'none'
+      Konvert.style.display = 'none'
+  } else if (index === 1) {
+    console.log(index) 
+      Standart.style.display = 'none'
+      Express.style.display = 'block'
+      Konvert.style.display = 'none'
+  } else if (index === 2) {
+      Standart.style.display = 'none'
+      Express.style.display = 'none'
+      Konvert.style.display = 'block'
+  }
+}
+
+typeTransporation.addEventListener('change', (e) => checkSelectedType(e.target.selectedIndex))
+
+
+lstOfRadios.forEach((el, i) => 
+  {
+    el.addEventListener('change', () =>
+      {
+        postDataToServer()
+      })
+  })
+
+
+function validateCity(city){
+  if (cities.indexOf(city.value) === -1 || city.value == ''){
+      city.style.cssText = errorStyles
+      return false
+    } else{
+      city.style.cssText = 'none'
+      return true
+    }
+}
+
+
+function postDataToServer()
+{
+  const resTo = validateCity(cityto)
+  const resFrom = validateCity(cityfrom)
+  if(resTo && resFrom)
+    {
+        data = {
+          cityfrom: cityfrom.value,
+          cityto: cityto.value,
+          delivery_from: fromAdr.checked,
+          delivery_to: toAdr.checked,
+          weight: weightto.value? weightto.value : 0,
+          volume: weightfrom.value
+      }
+      postData(url=`http://${HOST}/api/post-calc`, data)
+      .then((data) => 
+        {
+          console.log(data)
+          data = JSON.parse(data)
+          ins = insertData(data)
+        });
+    } 
+}
+
+
+//Валидаторы ------------------------------------------------
+
+function funcAwait(){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve()
+          }, 300)
+    })
+}
+
+const compulsoryFields = [
+  cityfrom, cityto
+]
+
+
+compulsoryFields.forEach((el) => {
+    el.addEventListener('change', async function(){
+      await funcAwait()
+      postDataToServer()
+    })
+})
+
+
+
+class Validator
+{
+  constructor(
+    cityfrom, cityto, datecargo, naturecargo, weight, length, width, height,
+
+    individual, entity, 
+    fioIndividual, passportIndividual, phoneIndividual,
+    fioIntity, innEntity, contactPersonEntity, phoneEntity,
+
+    individual1, entity1,
+     fioIndividual1, passportIndividual1, phoneIndividual1,
+     fioIntity1, innEntity1, contactPersonEntity1, phoneEntity1,
+     //26
+
+     senderIndividualThirdCheck,
+senderEntityThirdCheck,
+{% comment %} senderIndividualThirdDiv,
+senderEntityThirdDiv, {% endcomment %}
+senderThirdCheck,
+senderFioIndividual,
+senderPassportIndividual,
+senderPhoneIndividual,
+senderFioEntity,
+senderInnEntity,
+senderContactEntity,
+senderPhoneEntity,
+recipientIndividualThirdCheck,
+recipientEntityThirdCheck,
+{% comment %} recipientIndividualThirdDiv,
+recipientEntityThirdDiv, {% endcomment %}
+recipientThirdCheck,
+recipientFioIndividual,
+recipientPassportIndividual,
+recipientPhoneIndividual,
+recipientFioEntity,
+recipientInnEntity,
+recipientContactEntity,
+recipientPhoneEntity
+
+    ){
+
+      this.arrOfErrors = new Array
+
+      this.cityfrom = cityfrom
+      this.cityto = cityto
+      this.datecargo = datecargo
+      this.naturecargo = naturecargo
+
+      this.weight = weight
+      this.length = length
+      this.width = width
+      this.height = height
+
+      this.individual = individual
+      this.entity = entity
+
+      this.fioIndividual = fioIndividual
+      this.passportIndividual = passportIndividual
+      this.phoneIndividual = phoneIndividual
+
+      this.fioIntity = fioIntity
+      this.innEntity = innEntity
+      this.contactPersonEntity = contactPersonEntity
+      this.phoneEntity = phoneEntity
+
+      this.individual1 = individual1
+      this.entity1 = entity1
+
+      this.fioIndividual1 = fioIndividual1
+      this.passportIndividual1 = passportIndividual1
+      this.phoneIndividual1 = phoneIndividual1
+  
+      this.fioIntity1 = fioIntity1
+      this.innEntity1 = innEntity1
+      this.contactPersonEntity1 = contactPersonEntity1
+      this.phoneEntity1 = phoneEntity1
+
+      //26
+
+      this.senderIndividualThirdCheck = senderIndividualThirdCheck
+      this.senderEntityThirdCheck = senderEntityThirdCheck
+
+      this.senderThirdCheck = senderThirdCheck
+      this.senderFioIndividual = senderFioIndividual
+      this.senderPassportIndividual = senderPassportIndividual
+      this.senderPhoneIndividual = senderPhoneIndividual
+      this.senderFioEntity = senderFioEntity
+      this.senderInnEntity = senderInnEntity
+      this.senderContactEntity = senderContactEntity
+      this.senderPhoneEntity = senderPhoneEntity
+      this.recipientIndividualThirdCheck = recipientIndividualThirdCheck
+      this.recipientEntityThirdCheck = recipientEntityThirdCheck
+      this.recipientThirdCheck = recipientThirdCheck
+      this.recipientFioIndividual = recipientFioIndividual
+      this.recipientPassportIndividual = recipientPassportIndividual
+      this.recipientPhoneIndividual = recipientPhoneIndividual
+      this.recipientFioEntity = recipientFioEntity
+      this.recipientInnEntity = recipientInnEntity
+      this.recipientContactEntity = recipientContactEntity
+      this.recipientPhoneEntity = recipientPhoneEntity
+
+
+  }
+
+
+  validateCity()
+  {
+    const arr = [this.cityfrom, this.cityto]
+    arr.forEach((el) => {
+      if (!el.value || cities.indexOf(el.value) === -1){
+        this.arrOfErrors.push(el.getAttribute('id'))
+      }
+    })
+  }
+
+  validateDate()
+  {
+    if (!this.datecargo.value){
+      this.arrOfErrors.push(this.datecargo.getAttribute('id'))
+    }
+  }
+
+  validateNaturecargo()
+  {
+    if (!this.naturecargo.value){
+      this.arrOfErrors.push(this.naturecargo.getAttribute('id'))
+    }
+  }
+
+  validateWeightParams()
+  {
+    if (!this.weight.value || this.weight.value >= 500){
+      this.arrOfErrors.push(this.weight.getAttribute('id'))
+    }
+  }
+
+  validateLengthParams()
+  {
+    const arrOfLengths = [this.length, this.width, this.height]
+    arrOfLengths.forEach((el) => {
+      if (!el.value || el.value > 3){
+        this.arrOfErrors.push(el.getAttribute('id'))
+      }
+    })
+  }
+
+  checkErrors()
+  {
+    if (this.arrOfErrors.length === 0){
+      return true
+    } else {
+      this.arrOfErrors.forEach((el) => {
+        document.getElementById(el).style.cssText = errorStyles
+        return false
+      })
+    }
+  }
+
+  checkInputFields()
+  {
+    const arr = [this.cityfrom,
+      this.cityto,
+      this.datecargo,
+      this.naturecargo,
+
+      this.weight,
+      this.length,
+      this.width,
+      this.height,
+
+      this.individual,
+      this.entity,
+
+      this.fioIndividual,
+      this.passportIndividual,
+      this.phoneIndividual,
+
+      this.fioIntity,
+      this.innEntity,
+      this.contactPersonEntity,
+      this.phoneEntity,
+
+      this.individual1,
+      this.entity1,
+
+      this.fioIndividual1,
+      this.passportIndividual1,
+      this.phoneIndividual1,
+  
+      this.fioIntity1,
+      this.innEntity1,
+      this.contactPersonEntity1,
+      this.phoneEntity1,
+      
+      this.senderFioIndividual,
+      this.senderPassportIndividual,
+      this.senderPhoneIndividual,
+
+      this.senderFioEntity,
+      this.senderInnEntity,
+      this.senderContactEntity,
+      this.senderPhoneEntity,
+
+
+      this.recipientFioIndividual,
+      this.recipientPassportIndividual,
+      this.recipientPhoneIndividual,
+
+      this.recipientFioEntity,
+      this.recipientInnEntity,
+      this.recipientContactEntity,
+      this.recipientPhoneEntity
+        ]
+
+    arr.forEach((el, i) => {
+      try{
+        el.style.cssText = 'none'
+      } catch {
+        console.log(el)
+        console.log(i)
+      }
+    })
+
+    const divs = [
+    'div_id_volume_one',
+    'div_id_weight_one',
+    'div_id_height_one',
+    'div_id_width_one',
+    'div_id_length_one',
+    ]
+    divs.forEach((el) => {
+      const div = document.getElementById(el)
+      const children = div.childNodes
+      if (children.length === 6){
+        this.removeErrorMessage(children, div)
+      }
+    })
+  }
+
+  validateSender()
+  {
+    if (this.individual.checked){
+      const arr = [this.fioIndividual, this.passportIndividual, this.phoneIndividual]
+      arr.forEach((el) => {
+        if (!el.value){ 
+          document.getElementById('collapseThree').classList.add('show')
+          this.arrOfErrors.push(el.getAttribute('id'))
+        }
+      })
+    }
+  }
+
+  validateSenderEntity()
+  {
+    if (this.entity.checked){
+      const arr = [this.fioIntity, this.innEntity, this.contactPersonEntity, this.phoneEntity]
+      arr.forEach((el) => {
+        if (!el.value){ 
+          document.getElementById('collapseThree').classList.add('show')
+          this.arrOfErrors.push(el.getAttribute('id'))
+        }
+      })
+    }
+  }
+
+  validateRecipient()
+  {
+    if (this.individual1.checked){
+      const arr = [this.fioIndividual1, this.passportIndividual1, this.phoneIndividual1]
+      arr.forEach((el) => {
+        if (!el.value){ 
+          document.getElementById('collapseThree').classList.add('show')
+          this.arrOfErrors.push(el.getAttribute('id'))
+        }
+      })
+    }
+  }
+
+  validateRecipientEntity()
+  {
+    if (this.entity1.checked){
+      const arr = [this.fioIntity1, this.innEntity1, this.contactPersonEntity1, this.phoneEntity1]
+      arr.forEach((el) => {
+        if (!el.value){ 
+          document.getElementById('collapseThree').classList.add('show')
+          this.arrOfErrors.push(el.getAttribute('id'))
+        }
+      })
+    }
+  }
+
+  startValidating()
+  {
+    this.checkInputFields()
+    this.validateCity()
+    this.validateDate()
+    this.validateNaturecargo()
+    this.validateWeightParams()
+    this.validateLengthParams()
+    this.validateSender()
+    this.validateSenderEntity()
+    this.validateRecipient()
+    this.validateRecipientEntity()
+    this.putErrorMessage()
+    this.validateThirdSideSender()
+  }
+
+  defineErrorMessage(id, i)
+  {
+    const arrOfMessages = [
+      'Значение не должно превышать 500кг',
+      'Значение не должно превышать 3м',
+      'Обязательное поле',
+      'Неверное значение',
+    ]
+
+    const message = this.createMessage()
+    const el = document.getElementById(id)
+    const res = this.getParents(el)
+    const children = res[0]
+    const div = res[1]
+      message.innerText = arrOfMessages[i]
+      if (Array.from(children).length === 5){
+        div.appendChild(message)
+      }
+  }
+
+  createMessage()
+  {
+    const message = document.createElement('p')
+    message.style.color = 'red'
+    message.setAttribute("class", "error-message")
+    return message
+  }
+
+  getParents(el)
+  {   
+    let i = el.parentNode;
+    let div = i.parentNode;
+    const children = div.childNodes
+    return [children, div]
+  }
+
+  putErrorMessage()
+  {
+    this.arrOfErrors.forEach((el) => {
+      if ([this.length, this.width, this.height].indexOf(document.getElementById(el)) != -1){
+        this.defineErrorMessage(el, 1)
+      }
+      else if (this.weight === document.getElementById(el)){
+        this.defineErrorMessage(el ,0)
+      }
+    })
+  }
+
+  removeErrorMessage(children, div)
+  {
+    children.forEach((el) => {
+        if (el.className === 'error-message'){
+          div.removeChild(el)
+      }
+    })
+  }
+
+
+  validateThirdSideSender()
+  {
+    const arr1 = [
+        this.senderFioIndividual,
+        this.senderPassportIndividual,
+        this.senderPhoneIndividual
+    ]
+
+    const arr2 = [
+        this.senderFioEntity,
+        this.senderInnEntity,
+        this.senderContactEntity,
+        this.senderPhoneEntity
+    ]
+
+    if (this.senderIndividualThirdCheck.checked){
+
+          if (this.senderThirdCheck.checked){
+              arr1.forEach((el) => {
+                if (!el.value){ 
+                  this.arrOfErrors.push(el.getAttribute('id'))
+                }
+            })
+          } else if (this.senderEntityThirdCheck.checked){
+            arr2.forEach((el) => {
+                if (!el.value){ 
+                  this.arrOfErrors.push(el.getAttribute('id'))
+                }
+            })
+          }
+      }
+  }
+
+}
+
+//Валидаторы ------------------------------------------------
+
+const extractedPrice = document.querySelector('#id_price')
+
+document.getElementById("form-post").addEventListener('submit', (e) => {
+    e.preventDefault()
+    validator = new Validator(
+      cityfrom, cityto, datecargo, naturecargo, weightto, len, wid, hei,
+      individual, entity, fioIndividual, passportIndividual, phoneIndividual,
+      fioIntity, innEntity, contactPersonEntity, phoneEntity,
+
+      individual1, entity1, fioIndividual1, passportIndividual1, phoneIndividual1,
+      fioIntity1, innEntity1, contactPersonEntity1, phoneEntity1,
+
+      senderIndividualThirdCheck,
+      senderEntityThirdCheck,
+      senderThirdCheck,
+      senderFioIndividual,
+      senderPassportIndividual,
+      senderPhoneIndividual,
+      senderFioEntity,
+      senderInnEntity,
+      senderContactEntity,
+      senderPhoneEntity,
+      recipientIndividualThirdCheck,
+      recipientEntityThirdCheck,
+      recipientThirdCheck,
+      recipientFioIndividual,
+      recipientPassportIndividual,
+      recipientPhoneIndividual,
+      recipientFioEntity,
+      recipientInnEntity,
+      recipientContactEntity,
+      recipientPhoneEntity
+    )
+
+    validator.startValidating() 
+
+    const result = validator.checkErrors()
+    if (result === true){
+      extractedPrice.innerText = +price.value
+     document.getElementById("form-post").submit()
+      price.value = +price.value
+    } else {
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
+    }
+    console.log(validator.arrOfErrors) 
+}) 
+
+
+const categories = [
+  place1, place2, docs
+]
+
+  const arrOfBlockedOptions = [
+      rigidPackaging,
+      palletBoard,
+      bag,
+      cardboardBox,
+      pallet,
+      strapping,
+      stretch,
+      airBubble,
+      loadingAndUnloadingSender,
+      loadingAndUnloadingRecipient,
+      registrationForShipment,
+  ]
+
+
+function blockOptions(el){
+  if (category.value === 'docs_a'){
+        arrOfBlockedOptions.forEach((el) => {
+          el.setAttribute('disabled', 'true')
+        })
+      } else {
+        arrOfBlockedOptions.forEach((el) => {
+          el.removeAttribute('disabled')
+        })
+    }
+}
+
+const arrOfBlockingDops = [
+  insurance,
+  returnOfAccompanyingDocuments,
+  sendingAccompanyingDocuments,
+  loadingAndUnloadingSender,
+  loadingAndUnloadingRecipient,
+  passSenderTerritory,
+  registrationForShipment,
+  paidEntrySenderTerritory,
+  internalShipmentNumber,
+  deliveryConfirmation,
+  powerOfAttorney,
+  preCall
+]
+
+const arrOfBlockingDopsValues = [
+    declaredValue,
+    floorSender,
+    carrySender,
+    floorRecipient,
+    carryRecipient,
+    id_sum,
+    cod
+]
+
+const arrOf1Place = [
+  weightto,
+  weightfrom,
+  len,
+  wid,
+  hei
+]
+
+const arrOf2Place = [
+  someweight,
+  somevolume,
+  someplacequantity,
+  longest,
+  widest,
+  highest
+]
+
+{% comment %} document.getElementById('id_length_one').setAttribute('placeholder', 'search') {% endcomment %}
+
+function removeAllData(){
+  {% comment %} price.innerText = 0 {% endcomment %}
+  counts.forEach((el) => {
+    el.value = 0
+  })
+  lstOfPackings.forEach((el) => {
+    el.checked = false
+  })
+  for (let i=0; i<arrOfBlockingDops.length; i++){
+    arrOfBlockingDops[i].checked = false
+  }
+  arrOfBlockingDopsValues.forEach((el) => {
+    el.value = 0
+  })
+  {% comment %} arrOf1Place.forEach((el) => {
+    el.value = ''
+  })
+  arrOf2Place.forEach((el) => {
+    el.value = ''
+  }) {% endcomment %}
+}
+
+categories.forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (el.id === '2place_a'){
+        postDataToServer()
+      }
+    category.value = el.id
+    blockOptions(el)
+    removeAllData()
+  })
+})
+
+
+//Переключение кнопок
+
+
+function radioCheckFrom() {
+    if (fromAdr.checked) {
+        document.getElementById('addressYes').style.display = 'block';
+    }
+    else document.getElementById('addressYes').style.display = 'none';
+
+    if (fromTerm.checked) {
+        document.getElementById('termYes').style.display = 'block';
+    }
+    else document.getElementById('termYes').style.display = 'none';
+}
+
+function radioCheckTo() {
+    if (toAdr.checked) {
+        document.getElementById('addressToYes').style.display = 'block';
+    }
+    else document.getElementById('addressToYes').style.display = 'none';
+
+    if (toTerm.checked) {
+        document.getElementById('termToYes').style.display = 'block';
+    }
+    else document.getElementById('termToYes').style.display = 'none';
+}
+
+function radioCheckFace() {
+    if (document.getElementById('individual').checked) {
+        document.getElementById('individualYes').style.display = 'block';
+    }
+    else document.getElementById('individualYes').style.display = 'none';
+
+    if (document.getElementById('entity').checked) {
+        document.getElementById('entityYes').style.display = 'block';
+    }
+    else document.getElementById('entityYes').style.display = 'none';
+}
+
+document.getElementById('div_id_fio_individual').style.marginTop = '10px';
+document.getElementById('div_id_fio_entity').style.marginTop = '10px';
+document.getElementById('div_id_fio_individual_p').style.marginTop = '10px';
+document.getElementById('div_id_fio_entity_p').style.marginTop = '10px';
+
+function radioCheckFaceTo() {
+    if (document.getElementById('individual1').checked) {
+        document.getElementById('individualYes1').style.display = 'block';
+    }
+    else document.getElementById('individualYes1').style.display = 'none';
+
+    if (document.getElementById('entity1').checked) {
+        document.getElementById('entityYes1').style.display = 'block';
+    }
+    else document.getElementById('entityYes1').style.display = 'none';
+}
+
+
+function check(){
+  if (document.getElementById('thirdP').checked) {
+    document.getElementById('thirdPYes').style.display = 'block';
+  }
+  else document.getElementById('thirdPYes').style.display = 'none';
+
+  if (document.getElementById('thirdP1').checked) {
+    document.getElementById('thirdP1Yes').style.display = 'block';
+  }
+  else document.getElementById('thirdP1Yes').style.display = 'none';
+}
+
+
+function checkPRR() {
+    if (document.getElementById('id_loading_and_unloading_sender').checked) {
+        document.getElementById('prrYes').style.display = 'block';
+    }
+    else document.getElementById('prrYes').style.display = 'none';
+}
+
+
+function checkPRR_r() {
+    if (document.getElementById('id_loading_and_unloading_recipient').checked) {
+        document.getElementById('prr1Yes').style.display = 'block';
+    }
+    else document.getElementById('prr1Yes').style.display = 'none';
+}
+
+
+function checkPass() {
+    if (document.getElementById('id_pass_sender_territory').checked) {
+        document.getElementById('pass').style.display = 'block';
+    }
+    else document.getElementById('pass').style.display = 'none';
+}
+
+
+function checkPaid() {
+    if (document.getElementById('id_paid_entry_sender_territory').checked) {
+        document.getElementById('paid').style.display = 'block';
+    }
+    else document.getElementById('paid').style.display = 'none';
+}
+
+function checkInsuranse() {
+    console.log('checked')
+    if (document.getElementById('id_insurance').checked) {
+        document.getElementById('decl_val').style.display = 'block';
+    }
+    else document.getElementById('decl_val').style.display = 'none';
+}
+
+
+function checkInternal() {
+    console.log('checked')
+    if (document.getElementById('id_internal_shipment_number').checked) {
+        document.getElementById('internal').style.display = 'block';
+    }
+    else document.getElementById('internal').style.display = 'none';
+}
+
+
+function checkCOD() {
+    if (document.getElementById('id_cod').checked) {
+        document.getElementById('cod').style.display = 'block';
+    }
+    else document.getElementById('cod').style.display = 'none';
+}
+
+
+function checkSecond() {
+    if (document.getElementById('id_second_address').checked) {
+        document.getElementById('second').style.display = 'block';
+    }
+    else document.getElementById('second').style.display = 'none';
+}
+
+
+function checkPower() {
+    if (document.getElementById('id_power_of_attorney').checked) {
+        document.getElementById('power').style.display = 'block';
+    }
+    else document.getElementById('power').style.display = 'none';
+}
+
+
+function checkCall() {
+    if (document.getElementById('id_pre_call').checked) {
+        document.getElementById('call').style.display = 'block';
+    }
+    else document.getElementById('call').style.display = 'none';
+}
+
+
+//Автозаполнение
+//_________________________
+
+    function autocomplete(inp, arr) {
+      inp.addEventListener("input", function(e) {
+        let a, b, i, val = this.value;
+        closeAllLists();
+        if (!val) {
+          return false;
+        } 
+        currentFocus = -1;
+        a = document.createElement("DIV");
+
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+
+        this.parentNode.appendChild(a);
+        for (i = 0; i < arr.length; i++) {
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            b = document.createElement("DIV");
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                b.addEventListener("click", function(e) {
+                inp.value = this.getElementsByTagName("input")[0].value;
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    
+        inp.addEventListener("keydown", function(e) {
+          let x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            currentFocus++;
+            addActive(x);
+          } else if (e.keyCode == 38) { 
+            currentFocus--;
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            e.preventDefault();
+            if (currentFocus > -1) {
+              if (x) x[currentFocus].click();
+            }
+          }
+
+    });
+      function addActive(x) {
+        if (!x) {
+          return false
+        };
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        for (let i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        const x = document.getElementsByClassName("autocomplete-items");
+        for (let i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+
+
+    document.addEventListener("click", function (e) {
+          closeAllLists(e.target);
+      });
+    }
+
+
+//GETTING csrf_token
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+      async function postData(url, data) {
+          const response = await fetch(url, {
+            method: 'POST',
+            cache: 'no-cache', 
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+              "X-CSRFTOKEN":  csrftoken
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer', 
+            body: JSON.stringify(data) 
+          });
+          return await response.json(); 
+        }
+
+
+
+
+
+    $("#id_address_from").suggestions({
+        token: "5f6f9e7bca9fd59b2c8f5243c58cf83271cb2ec8",
+        type: "ADDRESS",
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function(suggestion) {
+            console.log(suggestion);
+        }
+    });
+
+    $("#id_address_to").suggestions({
+        token: "5f6f9e7bca9fd59b2c8f5243c58cf83271cb2ec8",
+        type: "ADDRESS",
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function(suggestion) {
+            console.log(suggestion);
+        }
+    });
+
+    </script>
+{% endblock %}
